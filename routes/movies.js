@@ -48,13 +48,6 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: e.message });
   }
 });
-  
-});
-// router.get('/search/:query',async (req,res)=>{
-//    const query = req.params.query;
-   
-
-// })
 
 router.get('/randommovies', async (req, res) => {
   try {
