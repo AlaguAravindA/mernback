@@ -48,17 +48,16 @@ router.get('/getcomm/:imdb_id', async (req, res) => {
         const comments = await Comment.find({ imdb_id: imdb_id });
 
         if (!comments || comments.length === 0) {
-            return res.status(404).json({ message: 'Comments not found for IMDb ID: ' + imdb_id });
+            return res.status(200).json({ comments: [] });
         }
 
-         res.status(200).json({
+        res.status(200).json({
             comments: comments.map(comment => ({
                 userName: comment.userName,
                 commentText: comment.comments,
                 replies: comment.replies,
-                commentId:comment._id,
+                commentId: comment._id,
                 createdAt: comment.createdAt,
-                likes: comment.likes
             })),
         });
     } catch (error) {

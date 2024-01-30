@@ -1,4 +1,4 @@
-const { likePlaylist,isPlaylistLiked } = require('../controllers/likedPlaylistController');
+const { likePlaylist,isPlaylistLiked } = require('../controllers/likedplaylistController');
 
 const express = require('express');
 const router = express.Router();
@@ -62,7 +62,7 @@ router.post('/create', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-router.get('/:playlistID', async (req, res) => {
+router.get('/detail/:playlistID', async (req, res) => {
     try {
       const playlistID = req.params.playlistID;
   
