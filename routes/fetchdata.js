@@ -15,7 +15,8 @@ router.get('/:uid/:movieid', async (req, res) => {
     
 
     if (!userWatchlist || userWatchlist.watchlist.length === 0) {
-      return res.send("<h1 className='text-white' >No Watchlist found</h1>").status(404).json({ error: 'Watchlist not found or empty' });
+     res.status(404).json({ error: 'Watchlist not found or empty' }).send("<h1 className='text-white'>No Watchlist found</h1>");
+
     }
 
     // Check if the specified movie is in the watchlist

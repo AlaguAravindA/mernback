@@ -5,12 +5,12 @@ const moviesdata = require('../models/movie');
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const perPage = parseInt(req.query.perPage) || 80;
+    const perPage = 25;  // Set the number of movies per page to 25
+    const maxRecords = 1000;  // Limit the total number of records to 1000
     const genreString = req.query.genres || '';
-  
+
     // Check if genres are provided
     if (genreString) {
-      // Format the first letter of each genre in the string
       const formattedGenres = genreString.split('|').map(genre => genre.toLowerCase().charAt(0).toUpperCase() + genre.slice(1).toLowerCase());
   
       const regexQueries = formattedGenres.map(genre => ({
@@ -22,25 +22,23 @@ router.get('/', async (req, res) => {
         }
       }));
   
-      // Construct a query object to include genres if provided
-      const query = (page === 1 || page<=5) && formattedGenres.length > 0 ? { $or: regexQueries } : {};
+      const query = (page === 1 || page <= 5) && formattedGenres.length > 0 ? { $or: regexQueries } : {};
   
       const movies = await moviesdata.find(query).skip((page - 1) * perPage).limit(perPage);
-      const totalMovies = await moviesdata.countDocuments();
+      const totalMovies = await moviesdata.countDocuments(query);  // Count documents based on the query
   
-      const totalPages = Math.ceil(totalMovies / perPage);
-  
+      const totalPages = Math.ceil(Math.min(totalMovies, maxRecords) / perPage);
+
       res.json({
         items: movies,
         totalPages,
       });
     } else {
-      // If no genres provided, fetch all data without filtering
       const movies = await moviesdata.find().skip((page - 1) * perPage).limit(perPage);
-      const totalMovies = await moviesdata.countDocuments();
+      const totalMovies = await moviesdata.countDocuments();  // Count all documents
   
-      const totalPages = Math.ceil(totalMovies / perPage);
-  
+      const totalPages = Math.ceil(Math.min(totalMovies, maxRecords) / perPage);
+
       res.json({
         items: movies,
         totalPages,
@@ -49,13 +47,7 @@ router.get('/', async (req, res) => {
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
-  
 });
-// router.get('/search/:query',async (req,res)=>{
-//    const query = req.params.query;
-   
-
-// })
 
 router.get('/randommovies', async (req, res) => {
   try {

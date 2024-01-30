@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const { likePlaylist,isPlaylistLiked } = require('../controllers/likedplaylistController');
+=======
+const { likePlaylist,isPlaylistLiked } = require('../controllers/likedplaylistController.js');
+>>>>>>> 599df4e8acf3fa6e3019ccb7f3404bb44a5eca44
 
 const express = require('express');
 const router = express.Router();
