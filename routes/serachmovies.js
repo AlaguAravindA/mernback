@@ -46,6 +46,28 @@ router.get('/movietitles/:movietitle', async (req, res) => {
   }
 });
 
+router.get('/movieID/:movietitle', async (req, res) => {
+  try {
+    const movietitle = req.params.movietitle;
+
+    if (!movietitle) {
+      return res.status(400).json({ error: 'movietitle parameter is required' });
+    }
+
+    const regexPattern = new RegExp(`^${movietitle}$`, 'i');
+    const movies = await Movie.find({ original_title: { $regex: regexPattern } });
+
+    if (movies.length === 0) {
+      return res.status(404).json({ error: 'No movies found for the given movietitle' });
+    }
+
+    res.json({ items: movies });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 
