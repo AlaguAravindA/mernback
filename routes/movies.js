@@ -6,13 +6,13 @@ router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = 25;  // Set the number of movies per page to 25
-    const maxRecords = 1000;  // Limit the total number of records to 1000
+    const maxRecords = 9000;  // Limit the total number of records to 1000
     const genreString = req.query.genres || '';
 
     // Check if genres are provided
     if (genreString) {
       const formattedGenres = genreString.split('|').map(genre => genre.toLowerCase().charAt(0).toUpperCase() + genre.slice(1).toLowerCase());
-  
+
       const regexQueries = formattedGenres.map(genre => ({
         genres: {
           $in: [
@@ -21,12 +21,14 @@ router.get('/', async (req, res) => {
           ]
         }
       }));
-  
+
       const query = (page === 1 || page <= 5) && formattedGenres.length > 0 ? { $or: regexQueries } : {};
-  
-      const movies = await moviesdata.find(query).skip((page - 1) * perPage).limit(perPage);
-      const totalMovies = await moviesdata.countDocuments(query);  // Count documents based on the query
-  
+
+      const [movies, totalMovies] = await Promise.all([
+        moviesdata.find(query).select('id imdb_id original_title genres').skip((page - 1) * perPage).limit(perPage),
+        moviesdata.countDocuments(query)
+      ]);
+
       const totalPages = Math.ceil(Math.min(totalMovies, maxRecords) / perPage);
 
       res.json({
@@ -34,9 +36,11 @@ router.get('/', async (req, res) => {
         totalPages,
       });
     } else {
-      const movies = await moviesdata.find().skip((page - 1) * perPage).limit(perPage);
-      const totalMovies = await moviesdata.countDocuments();  // Count all documents
-  
+      const [movies, totalMovies] = await Promise.all([
+        moviesdata.find().select('id imdb_id original_title genres').skip((page - 1) * perPage).limit(perPage),
+        moviesdata.countDocuments()
+      ]);
+
       const totalPages = Math.ceil(Math.min(totalMovies, maxRecords) / perPage);
 
       res.json({
