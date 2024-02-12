@@ -15,16 +15,16 @@ router.get('/:uid', async (req, res) => {
 
         if (!existingWatchlist) {
             // If not, create a new watchlist for the user
-            // const newWatchlist = new Watchlist({ userId : userId });
-            // await newWatchlist.save();
+            const newWatchlist = new Watchlist({ userId : userId });
+            await newWatchlist.save();
 
-            Watchlist.create({userId : userId })
+            // Watchlist.create({userId : userId })
             console.log('Watchlist created for user:', userId);
         }
 
         // Continue with other login logic...
         // You might want to send a response indicating successful login.
-        // res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
