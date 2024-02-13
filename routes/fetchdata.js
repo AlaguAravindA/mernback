@@ -27,7 +27,7 @@ router.get('/:uid/:movieid', async (req, res) => {
     res.status(200).json({ isInWatchlist });
   } catch (error) {
     
-    console.error('Error checking watchlist:', error.message);
+    console.error('Error checking watchlist: in the movie', error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
